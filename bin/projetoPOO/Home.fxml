@@ -75,9 +75,9 @@
       </VBox>
    </left>
    <center>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" prefHeight="0.0" style="-fx-alignment: Center; -fx-background-color: transparent; -fx-background: #F4F6F8;" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" style="-fx-alignment: Center; -fx-background-color: transparent; -fx-background: #F4F6F8;" BorderPane.alignment="CENTER">
          <content>
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="25.0">
+            <VBox alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" prefHeight="0.0" spacing="25.0">
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <padding>
@@ -90,8 +90,8 @@
                            </font>
                         </Label>
                         <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#abrirNovaReceita" styleClass="btn-acao-receita" text="+ Nova Receita" />
-                        <Button mnemonicParsing="false" onAction="#abrirNovaDespesa" styleClass="btn-acao-despesa" text="+ Nova Despesa" />
+                        <Button mnemonicParsing="false" onAction="#onNovaReceitaClick" styleClass="btn-acao-receita" text="+ Nova Receita" />
+                        <Button mnemonicParsing="false" onAction="#onNovaDespesaClick" styleClass="btn-acao-despesa" text="+ Nova Despesa" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" prefHeight="139.0" prefWidth="647.0" spacing="20.0" VBox.vgrow="ALWAYS">
@@ -140,7 +140,7 @@
                         </AnchorPane>
                      </children>
                   </HBox>
-                  <HBox prefHeight="290.0" prefWidth="614.0" spacing="20.0" VBox.vgrow="ALWAYS">
+                  <HBox prefHeight="300.0" prefWidth="550.0" spacing="20.0" VBox.vgrow="ALWAYS">
                      <children>
                         <PieChart minHeight="300.0" HBox.hgrow="ALWAYS" />
                         <BarChart minHeight="300.0" HBox.hgrow="ALWAYS">
@@ -163,12 +163,13 @@
                               <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
                            </VBox.margin>
                         </Label>
-                        <TableView prefHeight="400.0" prefWidth="200.0" styleClass="tabela-financas" VBox.vgrow="NEVER">
+                        <TableView fx:id="tabelaMovimentos" minHeight="400.0" prefHeight="400.0" prefWidth="800.0" styleClass="tabela-financas">
                           <columns>
-                            <TableColumn prefWidth="100.0" text="Data" />
-                            <TableColumn prefWidth="250.0" text="Descrição" />
-                              <TableColumn prefWidth="120.0" text="Categoria" />
-                              <TableColumn prefWidth="100.0" style="-fx-alignment: CENTER-RIGHT;" text="Valor (€)" />
+                            <TableColumn fx:id="colData" prefWidth="100.0" text="Data" />
+                            <TableColumn fx:id="colDescricao" prefWidth="250.0" text="Descrição" />
+                              <TableColumn fx:id="colCategoria" prefWidth="120.0" text="Categoria" />
+                              <TableColumn fx:id="colPagamento" prefWidth="250.0" text="Método de Pagamento" />
+                              <TableColumn fx:id="colValor" prefWidth="100.0" style="-fx-alignment: CENTER-RIGHT;" text="Valor (€)" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

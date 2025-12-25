@@ -138,3 +138,13 @@
     -fx-background-color: #7d7d7d; /* Mais escuro quando passas o rato */
 }
 
+/* Aplica apenas ao gráfico com fx:id="barChartReceitasDespesas" */
+#barChartReceitasDespesas .default-color0.chart-bar {
+    -fx-bar-fill: #2ed8b6; 
+}
+
+#barChartReceitasDespesas .default-color1.chart-bar {
+    -fx-bar-fill: #FF5370; 
+}
+
+
