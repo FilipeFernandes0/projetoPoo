@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="700.0" prefWidth="1100.0" style="-fx-background-color: #F4F6F8;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projetoPOO.HomeController">
+   <left>
+      <VBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #2D3447;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <Label alignment="CENTER" prefHeight="56.0" prefWidth="160.0" text="Finanças" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </Label>
+            <Button alignment="BOTTOM_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToHome" prefHeight="0.0" style="-fx-background-color: transparent; -fx-text-fill: white;" text="Home" textFill="WHITE">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <styleClass>
+                  <String fx:value="button-menu" />
+                  <String fx:value="button-menu-ativo" />
+               </styleClass>
+            </Button>
+            <Button alignment="BOTTOM_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToReceitas" prefHeight="0.0" style="-fx-background-color: transparent; -fx-text-fill: white;" styleClass="button-menu" text="Receitas" textFill="WHITE">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </Button>
+            <Button alignment="BOTTOM_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToDespesas" prefHeight="0.0" style="-fx-background-color: transparent; -fx-text-fill: white;" styleClass="button-menu" text="Despesas" textFill="WHITE">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </Button>
+            <Button alignment="BOTTOM_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToRelatorios" prefHeight="0.0" style="-fx-background-color: transparent; -fx-text-fill: white;" styleClass="button-menu" text="Relatórios" textFill="WHITE">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </Button>
+            <Button alignment="BOTTOM_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToSobre" prefHeight="0.0" style="-fx-background-color: transparent; -fx-text-fill: white;" styleClass="button-menu" text="Sobre" textFill="WHITE">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </Button>
+         </children>
+         <effect>
+            <DropShadow>
+               <color>
+                  <Color opacity="0.30000001192092896" />
+               </color>
+            </DropShadow>
+         </effect>
+      </VBox>
+   </left>
+   <center>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" prefHeight="0.0" style="-fx-alignment: Center; -fx-background-color: transparent; -fx-background: #F4F6F8;" BorderPane.alignment="CENTER">
+         <content>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="25.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <padding>
+                        <Insets bottom="20.0" />
+                     </padding>
+                     <children>
+                        <Label text="Visão Geral">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Label>
+                        <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" onAction="#abrirNovaReceita" styleClass="btn-acao-receita" text="+ Nova Receita" />
+                        <Button mnemonicParsing="false" onAction="#abrirNovaDespesa" styleClass="btn-acao-despesa" text="+ Nova Despesa" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="139.0" prefWidth="647.0" spacing="20.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <AnchorPane prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: linear-gradient(to right,#4099ff,#73b4ff); -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+                           <children>
+                              <Label layoutX="59.0" layoutY="14.0" text="Saldo Total" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblSaldo" layoutX="53.0" layoutY="45.0" text="1.250€" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="28.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: #2ed8b6; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+                           <children>
+                              <Label layoutX="60.0" layoutY="14.0" text="Receitas" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblReceitas" layoutX="54.0" layoutY="45.0" text="1.250€" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="28.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: #FF5370; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+                           <children>
+                              <Label layoutX="60.0" layoutY="14.0" text="Despesas" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblDespesas" layoutX="54.0" layoutY="45.0" text="1.250€" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="28.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="290.0" prefWidth="614.0" spacing="20.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <PieChart minHeight="300.0" HBox.hgrow="ALWAYS" />
+                        <BarChart minHeight="300.0" HBox.hgrow="ALWAYS">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </BarChart>
+                     </children>
+                  </HBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label text="Movimentos Recentes" textFill="#2d3447">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                           </VBox.margin>
+                        </Label>
+                        <TableView prefHeight="400.0" prefWidth="200.0" styleClass="tabela-financas" VBox.vgrow="NEVER">
+                          <columns>
+                            <TableColumn prefWidth="100.0" text="Data" />
+                            <TableColumn prefWidth="250.0" text="Descrição" />
+                              <TableColumn prefWidth="120.0" text="Categoria" />
+                              <TableColumn prefWidth="100.0" style="-fx-alignment: CENTER-RIGHT;" text="Valor (€)" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
