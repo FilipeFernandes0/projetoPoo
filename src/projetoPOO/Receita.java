@@ -6,8 +6,8 @@ import java.io.Serializable;
 public class Receita extends Transacao implements Serializable{
 	private TipoReceita tp;
 	
-	public Receita(LocalDate data, double valor, TipoReceita tp) {
-		super(data, valor);
+	public Receita(LocalDate data, double valor, String descricao,String tipo, TipoReceita tp) {
+		super(data, valor, descricao, tipo);
 		this.tp=tp;
 		
 	}
@@ -46,7 +46,9 @@ public class Receita extends Transacao implements Serializable{
 		 return new Receita(
 		            this.getData(),   
 		            this.getValor(),  
-		            this.tp        
+		            this.getDescricao(),
+		            this.getTipo(),
+		            this.tp 
 		        );    
 	}
 

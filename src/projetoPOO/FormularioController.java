@@ -16,113 +16,176 @@ public class FormularioController {
 	private TextField txtValor;
 	@FXML
 	private DatePicker dpData;
-	@FXML
-	private ComboBox<String> cbCategoria;
-	@FXML
-	private ComboBox<String> cbPagamento;
+	@FXML 
+	private ComboBox<String> cbCategoria; 
+    @FXML 
+    private ComboBox<String> cbPagamento; 
+    
+    @FXML 
+    private ComboBox<String> cbtipoReceita; 
+    
+    @FXML 
+    private CheckBox chkFixas; 
+    
+    private String tipoMovimento; 
+    private Transacao movimentoEmEdicao = null;
 
-	private String tipoMovimento;
-
-	// <--- NOVO: Variável para guardar o movimento que estamos a editar (se houver)
-	private Movimento movimentoEmEdicao = null;
+    private FinancasPoo financas;
 
 	@FXML
 	public void initialize() {
 		dpData.setValue(LocalDate.now()); // Data de hoje por defeito
 
-		cbPagamento.getItems().addAll("Dinheiro", "Cartão", "MBWay", "Transferência");
-		cbPagamento.getSelectionModel().selectFirst();
+		//cbPagamento.getItems().addAll("Dinheiro", "Cartão", "MBWay", "Transferência");
+		//cbPagamento.getSelectionModel().selectFirst();
 	}
+	
+	public void setModel(FinancasPoo f) {
+        this.financas = f;
+    }
 
 	public void setTipo(String tipo) {
         this.tipoMovimento = tipo;
         lblTitulo.setText("Nova " + tipo);
         
-        // Limpa o que lá estava
-        cbCategoria.getItems().clear();
-        
-        // --- LISTA ÚNICA PARA TUDO (Receitas e Despesas) ---
-        // Como pediste, carregamos sempre as mesmas opções:
-        cbCategoria.getItems().addAll(
-            "Geral",
-            "Alimentação",
-            "Transporte",
-            "Salário",        // Serve para Receita
-            "Investimentos",  // Serve para os dois
-            "Lazer",
-            "Saúde",
-            "Casa",
-            "Educação",
-            "Outros"
-        );
-
-        /* --- CÓDIGO FUTURO (DO BACKEND) ---
-           Quando o teu amigo entregar a classe, apagas a lista de cima 
-           e usas este bloco:
-           
-        try {
-            // import myinputs.Categoria;
-            myinputs.Categoria cat = new myinputs.Categoria(); 
-            cbCategoria.getItems().addAll(cat.a, cat.s, cat.t, "Outros"); 
-        } catch (Exception e) {
-            System.out.println("Classe Categoria ainda não existe.");
+        if (tipo.equalsIgnoreCase("Receita")) {
+            configurarModoReceita();
+        } else {
+            configurarModoDespesa();
         }
-        */
+    }
+	
+	private void configurarModoReceita() {
+        // A. Esconder coisas de Despesa (com segurança!)
+        safeSetVisible(chkFixas, false);
+        safeSetVisible(cbPagamento, false);
+        safeSetVisible(cbCategoria, false);
         
-        // Seleciona o primeiro por defeito para não ir vazio
-        cbCategoria.getSelectionModel().selectFirst();
+        // B. Mostrar e Carregar Tipo de Receita
+        safeSetVisible(cbtipoReceita, true);
+        
+        if (cbtipoReceita != null) {
+            cbtipoReceita.getItems().clear();
+            cbtipoReceita.getItems().addAll(TipoReceita.tpReceita); 
+            cbtipoReceita.getSelectionModel().selectFirst();
+        }
+    }
+	
+	private void configurarModoDespesa() {
+        // A. Mostrar coisas de Despesa
+        safeSetVisible(chkFixas, true);
+        safeSetVisible(cbPagamento, true);
+        safeSetVisible(cbCategoria, true);
+        
+        // B. Esconder Tipo de Receita
+        safeSetVisible(cbtipoReceita, false);
+        
+        // C. Carregar Pagamentos (Estático)
+        if (cbPagamento != null) {
+            cbPagamento.getItems().clear();
+            // Estou a assumir que tens FormaPag.OPCOES, senão usa o teu .addAll manual
+            cbPagamento.getItems().addAll(FormaPag.fp);
+            cbPagamento.getSelectionModel().selectFirst();
+        }
+        
+        // D. Carregar Categorias (Estático)
+        if (cbCategoria != null) {
+            cbCategoria.getItems().clear();
+            // Estou a assumir que tens Categoria.OPCOES ou usas a lista manual
+            cbCategoria.getItems().addAll(
+                Categoria.categoria
+            );
+            cbCategoria.getSelectionModel().selectFirst();
+        }
+    }
+
+    // --- 3. O MÉTODO SALVADOR (SEGURANÇA) ---
+    // Este método impede que o programa crashe se a checkbox não existir
+    private void safeSetVisible(Control c, boolean show) {
+        if (c != null) {
+            c.setVisible(show);
+            c.setManaged(show); // Remove o buraco branco se estiver invisível
+        }
     }
         
         
     
 
 	@FXML
-	private void onSalvar() {
-		try {
-			String descricao = txtDescricao.getText();
+		private void onSalvar() {
+	        try {
+	            // Validações Básicas
+	            if (txtValor.getText().isEmpty() || dpData.getValue() == null) {
+	                mostrarAlerta("Preencha Data e Valor!");
+	                return;
+	            }
 
-			// Verificação extra para não dar erro se o valor estiver vazio
-			if (txtValor.getText().isEmpty()) {
-				mostrarAlerta("O valor é obrigatório.");
-				return;
-			}
+	            if (financas == null) {
+	                mostrarAlerta("Erro: Finanças não ligadas.");
+	                return;
+	            }
 
-			double valor = Double.parseDouble(txtValor.getText().replace(",", "."));
-			LocalDate data = dpData.getValue();
-			String categoria = cbCategoria.getValue();
-			String pagamento = cbPagamento.getValue();
+	            double valor = Double.parseDouble(txtValor.getText().replace(",", "."));
+	            LocalDate data = dpData.getValue();
+	            String descricao = txtDescricao.getText();
+	            
+	            // Remover antigo se estivermos a editar
+	            // Nota: Confirma se o teu método 'remover' aceita Transacao ou se tens de fazer Cast
+	            if (movimentoEmEdicao != null) {
+	                 if (movimentoEmEdicao instanceof Receita) financas.eliminarReceita((Receita) movimentoEmEdicao);
+	                 else if (movimentoEmEdicao instanceof DespesasPoo) financas.eliminarDespesa((DespesasPoo) movimentoEmEdicao);
+	            }
 
-			if (descricao.isEmpty() || categoria == null || pagamento == null) {
-				mostrarAlerta("Preencha todos os campos obrigatórios!");
-				return;
-			}
+	            if (tipoMovimento.equalsIgnoreCase("Receita")) {
+	                // --- SALVAR RECEITA ---
+	                String nomeTipo = cbtipoReceita.getValue();
+	                if (nomeTipo == null) { mostrarAlerta("Escolha o tipo!"); return; }
 
-			// Criar o objeto atualizado
-			Movimento novoMovimento = new Movimento(descricao, valor, data, categoria, pagamento, tipoMovimento);
+	                Receita novaReceita = new Receita(
+	                    data, 
+	                    valor, 
+	                    descricao, 
+	                    tipoMovimento, 
+	                    new TipoReceita(nomeTipo) // O teu construtor pede objeto TipoReceita
+	                );
+	                
+	                financas.adicionarReceita(novaReceita);
+	                System.out.println("Receita Salva: " + nomeTipo);
 
-			// --- LÓGICA DE PERSISTÊNCIA (Gravar no Ficheiro) ---
+	            } else {
+	                // --- SALVAR DESPESA ---
+	                String nomeCat = cbCategoria.getValue();
+	                String nomePag = cbPagamento.getValue();
+	                boolean isFixa = (chkFixas != null) && chkFixas.isSelected();
 
-			// 1. Se estivermos a EDITAR, removemos primeiro o antigo da lista
-			if (movimentoEmEdicao != null) {
-				Dados.remover(movimentoEmEdicao);
-			}
+	                DespesasPoo novaDespesa = new DespesasPoo(
+	                    data, 
+	                    valor, 
+	                    descricao, 
+	                    tipoMovimento, 
+	                    new Categoria(nomeCat), 
+	                    new FormaPag(nomePag), 
+	                    isFixa
+	                );
+	                
+	                financas.adicionarDespesa(novaDespesa);
+	                System.out.println("Despesa Salva: " + nomeCat);
+	            }
+	            
+	            GestorFicheiros.guardarDados(financas);
+	            
+	            fecharJanela();
+	            
 
-			// 2. Adicionamos o novo à lista global (e a classe Dados grava no ficheiro
-			// automaticamente)
-			Dados.adicionar(novoMovimento);
-
-			System.out.println("Guardado com sucesso: " + novoMovimento);
-
-			fecharJanela();
-
-		} catch (NumberFormatException e) {
-			mostrarAlerta("O valor deve ser um número válido (ex: 12.50)");
-		} catch (Exception e) {
-			mostrarAlerta("Erro ao salvar: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
+	        } catch (NumberFormatException e) {
+	            mostrarAlerta("Valor inválido.");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            mostrarAlerta("Erro ao salvar: " + e.getMessage());
+	        }
+	    }
+		
+		
 	@FXML
 	private void onCancelar() {
 		fecharJanela();
@@ -142,16 +205,22 @@ public class FormularioController {
 	}
 
 	// Método para encher os campos quando clicamos em Editar
-	public void setMovimento(Movimento m) {
-		this.movimentoEmEdicao = m; // <--- GUARDAR A REFERÊNCIA DO OBJETO ANTIGO
-
-		txtDescricao.setText(m.getDescricao());
-		txtValor.setText(String.valueOf(m.getValor()));
-
-		cbCategoria.setValue(m.getCategoria());
-		cbPagamento.setValue(m.getFormaPagamento());
-		dpData.setValue(m.getData());
-
-		lblTitulo.setText("Editar " + tipoMovimento);
-	}
+	public void setMovimento(Transacao t) {
+        this.movimentoEmEdicao = t;
+        txtDescricao.setText(t.getDescricao());
+        txtValor.setText(String.valueOf(t.getValor()));
+        dpData.setValue(t.getData());
+        
+        if (t instanceof Receita) {
+            setTipo("Receita");
+            Receita r = (Receita) t;
+            if (cbtipoReceita != null) cbtipoReceita.setValue(r.getTp().getTipo()); // Ajusta getter se necessário
+        } else if (t instanceof DespesasPoo) {
+            setTipo("Despesa");
+            DespesasPoo d = (DespesasPoo) t;
+            if(cbCategoria != null) cbCategoria.setValue(d.getC().getNome());
+            if(cbPagamento != null) cbPagamento.setValue(d.getF().getFormaPagamento());
+            if(chkFixas != null) chkFixas.setSelected(d.getFixas());
+        }
+    }
 }

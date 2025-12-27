@@ -138,6 +138,7 @@
                             <TableColumn fx:id="colData" prefWidth="120.0" text="Data" />
                               <TableColumn fx:id="colDescricao" prefWidth="300.0" text="Descrição" />
                               <TableColumn fx:id="colCategoria" prefWidth="150.0" text="Categoria" />
+                              <TableColumn fx:id="colFixa" prefWidth="120.0" text="Fixa" />
                               <TableColumn fx:id="colPagamento" prefWidth="250.0" text="Método de Pagamento" />
                               <TableColumn fx:id="colValor" prefWidth="120.0" style="-fx-alignment: CENTER-RIGHT; -fx-text-fill: #FF5370; font-weight: bold;" text="Valor (€)" />
                           </columns>

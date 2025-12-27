@@ -1,13 +1,21 @@
 package projetoPOO;
 
-public class FormaPag {
-    public String d="Dinheiro";
-    public String c="Cartao";
-    public String t="transferencia";
-    public String m="MBway";
+import java.io.Serializable;
 
-    public String formaPagamento;
+public class FormaPag implements Serializable {
+	public static final String[] fp = {
+			 "Dinheiro",
+			 "Cartao",
+			 "transferencia",
+			 "MBway",
+	};
+   
+
+    private String formaPagamento;
     public FormaPag(String fp){this.formaPagamento=fp;}
     public FormaPag(){this.formaPagamento="";}
+    public String getFormaPagamento() {return formaPagamento;}
+
+    public void setFormaPagamento(String fp) {this.formaPagamento = fp;}
 
 }

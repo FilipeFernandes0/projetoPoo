@@ -1,15 +1,22 @@
 package projetoPOO;
 
-public class Categoria {
-    public String a="Alimentacao";
-    public String s="Saude";
-    public String t="Transporte";
-    public String f="Ferias";
-    public String v="Vestuario";
-    public String c="Casa";
-    public String sbc="Subscricoes";
+import java.io.Serializable;
+
+public class Categoria implements Serializable {
+	
+	public static final String[] categoria = {
+			"Alimentacao",
+		    "Saude",
+		    "Transporte",
+		   "Ferias",
+		    "Vestuario",
+		    "Casa",
+		    "Subscricoes",
+		    "Outros",
+	};
+   
     
-    public String nome;
+    private String nome;
 
     public Categoria(String nome) {this.nome = nome;}
 

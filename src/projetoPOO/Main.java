@@ -13,8 +13,12 @@ public class Main extends Application {
 		try {
 			
 			// Isto lê o ficheiro 'dados_financeiros.txt' antes da janela abrir
-			Dados.carregarFicheiro(); 
+			 
+			FinancasPoo dadosFinancas = GestorFicheiros.carregarDados();
 			
+			if ( dadosFinancas != null) {
+                sceneController.financas = dadosFinancas;
+            }
 			
 			Parent root = FXMLLoader.load(getClass().getResource("Home.fxml"));
 			Scene scene = new Scene(root);

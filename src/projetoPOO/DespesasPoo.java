@@ -9,11 +9,12 @@ public class DespesasPoo extends Transacao implements Serializable{
     private Categoria c;
     private boolean fixas=false;//despesa fixa=true, despesa nao fixa =false
 
-    public DespesasPoo(LocalDate data, double valor, Categoria c, FormaPag f, boolean fx) {
-        super(data, valor);
+    public DespesasPoo(LocalDate data, double valor, String descricao, String tipo, Categoria c, FormaPag f, boolean fx) {
+        super(data, valor, descricao, tipo);
         this.c = c;
         this.f = f;
         this.fixas=fx;
+ 
     }
    
     //getters
@@ -38,10 +39,12 @@ public class DespesasPoo extends Transacao implements Serializable{
    public DespesasPoo clone() {
 	   return new DespesasPoo(
 	            this.getData(),   
-	            this.getValor(),  
+	            this.getValor(),
+	            this.getDescricao(),
+	            this.getTipo(),
 	            this.c,      
 	            this.f,           
-	            this.fixas        
+	            this.fixas
 	        );    
 	   
    }
@@ -58,6 +61,6 @@ public class DespesasPoo extends Transacao implements Serializable{
     }
     @Override
     public String toString() {
-        return  super.toString() + "formaPagamento=" + f.formaPagamento + "Despesa fixa" + fixas + "categoria" + c.getNome();/*nome e formaPagameto vem das classes respetivas */
+        return  super.toString() + "formaPagamento=" + f + "Despesa fixa" + fixas + "categoria" + c.getNome();/*nome e formaPagameto vem das classes respetivas */
     } 
 }

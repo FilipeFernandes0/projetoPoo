@@ -8,23 +8,26 @@ import java.util.ArrayList;
 public class FinancasPoo implements Serializable{
     public ArrayList<DespesasPoo> despesas;
     public ArrayList<Receita> receitas;
+    public ArrayList<Transacao> transacoes;
 
     public FinancasPoo(){
         despesas=new ArrayList<>();
-        receitas=new ArrayList<>();    
+        receitas=new ArrayList<>();   
+        transacoes = new ArrayList<>();
     }
         //Adicionar uma receita
 	public void adicionarReceita(Receita r) {
 		receitas.add(r);
+		transacoes.add(r);
 	}
 	//Adicionar uma despesa
 	public void adicionarDespesa(DespesasPoo d) {
 		despesas.add(d);
+		transacoes.add(d);
 	}
 	//Remover uma receita
 	public void eliminarReceita(Receita r) {
-		if(receitas.remove(r)) {
-		}
+		receitas.remove(r);
 	}
 	//Remover uma despesa
 	public void eliminarDespesa(DespesasPoo d) {
@@ -147,5 +150,32 @@ public class FinancasPoo implements Serializable{
             }
         }if (x == 0){return 0.0;}
         return total/x;
+     
+    
+    }
+    
+    public double getTotalReceitas()
+    {
+    	double total = 0.0;
+    	for(int i = 0; i < receitas.size(); i++)
+    	{
+    		Receita r = receitas.get(i);
+    		total = total + r.getValor();
+    	}
+    	
+    	return total;
+    }
+    
+    public double getTotalDespesas()
+    {
+    	double total = 0.0;
+    	for(int i = 0; i < despesas.size(); i++)
+    	{
+    		DespesasPoo d = despesas.get(i);
+    		total = total + d.getValor();
+    		
+    	}
+    	
+    	return total;
     }
 }

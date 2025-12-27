@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -32,6 +33,12 @@
             </HBox>
             <HBox spacing="20.0">
                <children>
+                  <Label prefWidth="140.0" text="Despesa Fixa" />
+                  <CheckBox fx:id="chkFixas" mnemonicParsing="false" text="Fixa?" />
+               </children>
+            </HBox>
+            <HBox spacing="20.0">
+               <children>
                   <Label prefWidth="140.0" text="Valor (€)" />
                   <TextField fx:id="txtValor" maxWidth="1.7976931348623157E308" />
                </children>
@@ -40,6 +47,12 @@
                <children>
                   <Label prefWidth="140.0" text="Categoria" />
                   <ComboBox fx:id="cbCategoria" maxWidth="1.7976931348623157E308" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox layoutX="40.0" layoutY="384.0" spacing="20.0">
+               <children>
+                  <Label prefWidth="140.0" text="Tipo de Receita" />
+                  <ComboBox fx:id="cbtipoReceita" maxWidth="1.7976931348623157E308" prefWidth="150.0" />
                </children>
             </HBox>
             <HBox spacing="20.0">

@@ -4,10 +4,14 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell; // Importante para as cores
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -18,32 +22,52 @@ public class HomeController extends sceneController implements Initializable {
     @FXML private Label lblReceitas;
     @FXML private Label lblDespesas;
 
-    @FXML private TableView<Movimento> tabelaMovimentos;
+    // MUDANÇA: Agora usamos Transacao (o pai de todos)
+    @FXML private TableView<Transacao> tabelaMovimentos;
 
-    @FXML private TableColumn<Movimento, LocalDate> colData;
-    @FXML private TableColumn<Movimento, String> colDescricao;
-    @FXML private TableColumn<Movimento, String> colCategoria;
-    @FXML private TableColumn<Movimento, String> colPagamento;
-    @FXML private TableColumn<Movimento, Double> colValor;
+    @FXML private TableColumn<Transacao, LocalDate> colData;
+    @FXML private TableColumn<Transacao, String> colDescricao;
+    @FXML private TableColumn<Transacao, String> colCategoria;
+    @FXML private TableColumn<Transacao, String> colPagamento;
+    @FXML private TableColumn<Transacao, Double> colValor;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("A iniciar o Dashboard...");
         
-        // --- AQUI ESTÁ A ALTERAÇÃO: Voltamos aos valores fixos ---
         atualizarValoresFicticios(); 
 
         try {
-            // --- 1. DEFINIR O QUE APARECE (O conteúdo) ---
-            colData.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getData()));
-            colDescricao.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDescricao()));
-            colCategoria.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCategoria()));
-            colPagamento.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getFormaPagamento()));
-            colValor.setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getValor()));
+            // --- 1. DEFINIR O QUE APARECE ---
+            
+            // Data e Descrição são comuns a todos (Transacao)
+            colData.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getData()));
+            colDescricao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescricao()));
+            colValor.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getValor()));
 
-            // --- 2. DEFINIR A COR E FORMATO (A aparência) ---
-            // Mantive isto porque deixa a tabela bonita (Verde/Vermelho)
-            colValor.setCellFactory(column -> new TableCell<Movimento, Double>() {
+            // --- CATEGORIA (Só existe em Despesas) ---
+            colCategoria.setCellValueFactory(cellData -> {
+                Transacao t = cellData.getValue();
+                if (t instanceof DespesasPoo) {
+                    return new SimpleStringProperty(((DespesasPoo) t).getC().getNome());
+                } else if (t instanceof Receita) {
+                    return new SimpleStringProperty(((Receita) t).getTipo()); // Mostra o Tipo se for Receita
+                }
+                return new SimpleStringProperty("-");
+            });
+
+            // --- PAGAMENTO (Só existe em Despesas) ---
+            colPagamento.setCellValueFactory(cellData -> {
+                Transacao t = cellData.getValue();
+                if (t instanceof DespesasPoo) {
+                    return new SimpleStringProperty(((DespesasPoo) t).getF().getFormaPagamento());
+                }
+                return new SimpleStringProperty(""); // Receitas não têm pagamento, fica vazio
+            });
+
+
+            // --- 2. DEFINIR A COR E FORMATO ---
+            colValor.setCellFactory(column -> new TableCell<Transacao, Double>() {
                 @Override
                 protected void updateItem(Double item, boolean empty) {
                     super.updateItem(item, empty);
@@ -52,18 +76,16 @@ public class HomeController extends sceneController implements Initializable {
                         setText(null);
                         setStyle(""); 
                     } else {
-                        // Formata para ter "€" e 2 casas decimais
                         setText(String.format("%.2f €", item));
 
-                        // Descobre a linha inteira para saber se é Receita ou Despesa
-                        Movimento movimentoAtual = getTableRow().getItem();
+                        Transacao movimentoAtual = getTableRow().getItem();
 
                         if (movimentoAtual != null) {
-                            if (movimentoAtual.getTipo().equals("Receita")) {
-                                // VERDE e Alinhado à direita
+                            if (movimentoAtual instanceof Receita) {
+                                // VERDE
                                 setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold; -fx-alignment: CENTER-RIGHT;");
-                            } else {
-                                // VERMELHO e Alinhado à direita
+                            } else if (movimentoAtual instanceof DespesasPoo) {
+                                // VERMELHO
                                 setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-alignment: CENTER-RIGHT;");
                             }
                         }
@@ -71,22 +93,48 @@ public class HomeController extends sceneController implements Initializable {
                 }
             });
 
-            // Carregar os dados na tabela
-            tabelaMovimentos.setItems(Dados.getListaGlobal());
+            // Carregar os dados
+            carregarDashboard();
             
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
+    private void carregarDashboard() {
+        // 1. Segurança: Se não houver carteira, sai
+    	if (financas == null) {
+            System.out.println("Erro: Não há finanças ligadas à tabela.");
+            return;
+        }
 
-    // --- MÉTODO COM VALORES FICTÍCIOS (Estáticos) ---
-    private void atualizarValoresFicticios() {
-        lblSaldo.setText("1.500,00 €");
-        lblReceitas.setText("2.000,00 €");
-        lblDespesas.setText("500,00 €");
+        // 2. Limpa a tabela para não duplicar dados
+        tabelaMovimentos.getItems().clear();
+
+        ObservableList<Transacao> listaVisual = FXCollections.observableArrayList(financas.transacoes);
         
-        // Se quiseres podes forçar a cor branca aqui para garantir
-        lblSaldo.setStyle("-fx-text-fill: white;"); 
+        // 4. Mete na tabela
+        tabelaMovimentos.setItems(listaVisual);
+    }
+
+    private void atualizarValoresFicticios() {
+    	
+    	double totalReceita = financas.getTotalReceitas();
+    	
+    	double totalDespesa = financas.getTotalDespesas();
+    	
+    	double saldo = financas.getSaldo();
+    	
+        lblSaldo.setText(String.format("%.2f €", saldo));
+        lblReceitas.setText(String.format("%.2f €", totalReceita));
+        lblDespesas.setText(String.format("%.2f €", totalDespesa));
+        if (saldo >= 0) {
+            // Verde se positivo
+            lblSaldo.setStyle("-fx-text-fill: #2ecc71;"); 
+        } else {
+            // Vermelho se negativo
+            lblSaldo.setStyle("-fx-text-fill: #e74c3c;"); 
+        } 
     }
 
     @FXML
