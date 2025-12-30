@@ -20,6 +20,7 @@ public class sceneController {
     private Scene scene;
     private Parent root;
     
+    // Mantendo a tua estrutura estática
     protected static FinancasPoo financas = new FinancasPoo();
 
     // --- MÉTODOS DE NAVEGAÇÃO ---
@@ -49,8 +50,7 @@ public class sceneController {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         
-        // --- ALTERAÇÃO 1: CSS ATIVADO ---
-        // Isto garante que o estilo não desaparece ao mudar de página
+        // CSS ATIVADO
         try {
             String css = getClass().getResource("application.css").toExternalForm();
             scene.getStylesheets().add(css);
@@ -62,7 +62,7 @@ public class sceneController {
         stage.show();
     }
 
-    // --- ABRIR FORMULÁRIO (NOVA) ---
+    // --- ABRIR FORMULÁRIO ---
     protected void abrirFormulario(String tipo) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Formulario.fxml"));
@@ -84,37 +84,44 @@ public class sceneController {
         }
     }
     
-    // --- MÉTODO GENÉRICO: ELIMINAR ---
-    protected void eliminarGenerico(TableView<? extends Transacao> tabela) {
-        Transacao selecionado = tabela.getSelectionModel().getSelectedItem();
-
+    // --- MÉTODO ELIMINAR CORRIGIDO ---
+    // Agora recebe o item direto e retorna 'true' se apagou, para a filha atualizar a tabela.
+    protected boolean eliminarGenerico(Transacao selecionado) {
         if (selecionado == null) {
             mostrarAlerta(Alert.AlertType.WARNING, "Atenção", "Selecione uma linha para eliminar.");
-            return;
+            return false;
         }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Eliminar");
         alert.setHeaderText(null);
-        alert.setContentText("Tem a certeza que quer eliminar?"); 
+        alert.setContentText("Tem a certeza que quer eliminar: " + selecionado.getDescricao() + "?"); 
 
         Optional<ButtonType> result = alert.showAndWait();
+        
         if (result.isPresent() && result.get() == ButtonType.OK) {
-        	if (selecionado instanceof Receita) {
-                financas.eliminarReceita((Receita) selecionado);
+            // 1. Remove das listas principais (backend)
+            if (selecionado instanceof Receita) {
+                financas.receitas.remove(selecionado);
+                System.out.println("A apagar Receita...");
             } else if (selecionado instanceof DespesasPoo) {
-                financas.eliminarDespesa((DespesasPoo) selecionado);
+            	System.out.println("A apagar Despesa...");
+                financas.despesas.remove(selecionado);
             }
-        	
-        	GestorFicheiros.guardarDados(financas);
             
-            // Atualiza visualmente
-            tabela.getItems().remove(selecionado);
-            System.out.println("Eliminado com sucesso.");
+            // Remove da lista geral também
+            financas.transacoes.remove(selecionado);
+            
+            // 2. Guarda no ficheiro (usando o teu GestorFicheiros)
+            GestorFicheiros.guardarDados(financas);
+            
+            // Retorna true para avisar o controlador filho que pode atualizar a tabela
+            return true;
         }
+        return false;
     }
 
-    // --- MÉTODO GENÉRICO: EDITAR ---
+    // --- MÉTODO EDITAR ---
     protected void editarGenerico(TableView<? extends Transacao> tabela, String tipo) {
         Transacao selecionado = tabela.getSelectionModel().getSelectedItem();
 
@@ -131,15 +138,16 @@ public class sceneController {
             controller.setModel(financas);
             controller.setTipo(tipo); 
             
-            // --- ALTERAÇÃO 2: DADOS PARA EDIÇÃO ---
             // Passamos a transação selecionada para o formulário preencher os campos
             controller.setMovimento(selecionado); 
 
             Stage stage = new Stage();
+            stage.setTitle("Editar " + tipo);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
+            // A tabela é atualizada pelo método carregarDados() do filho, se necessário
             tabela.refresh(); 
 
         } catch (IOException e) {
@@ -148,7 +156,7 @@ public class sceneController {
         }
     }
 
-    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String msg) {
+    protected void mostrarAlerta(Alert.AlertType tipo, String titulo, String msg) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
         alert.setHeaderText(null);

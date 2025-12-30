@@ -19,7 +19,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="700.0" prefWidth="1100.0" style="-fx-background-color: #F4F6F8;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projetoPOO.DespesasController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="700.0" prefWidth="1100.0" style="-fx-background-color: #F4F6F8;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projetoPOO.DespesasController">
    <left>
       <VBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #2D3447;" BorderPane.alignment="CENTER">
          <padding>
@@ -94,20 +94,20 @@
                         <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#onEliminarClick" style="-fx-background-color: #FF0000;" text="Eliminar" />
                      </children>
                   </HBox>
-                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 0);;">
+                  <HBox spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 5; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 0);;" styleClass="card-padrao">
                      <padding>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                      <children>
-                        <DatePicker promptText="Data" />
-                        <TextField promptText="Pesquisa" HBox.hgrow="ALWAYS" />
-                        <ComboBox fx:id="cmbCategoria" prefWidth="150.0" promptText="Categoria" />
-                        <ComboBox prefWidth="170.0" promptText="Método de Pag.">
+                        <DatePicker fx:id="dpFiltroData" promptText="Data" />
+                        <TextField fx:id="txtFiltroPesquisa" promptText="Pesquisa" HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="cbFiltroCategoria" prefWidth="150.0" promptText="Categoria" />
+                        <ComboBox fx:id="cbFiltroPagamento" prefWidth="170.0" promptText="Método de Pag.">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </ComboBox>
-                        <Button minWidth="-Infinity" mnemonicParsing="false" style="-fx-background-color: #2D3447; -fx-text-fill: white;" text="Filtrar" />
+                        <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#onFiltrar" style="-fx-background-color: #2D3447; -fx-text-fill: white;" text="Filtrar" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
@@ -117,16 +117,23 @@
                      <children>
                         <AnchorPane prefHeight="100.0" prefWidth="300.0" style="-fx-background-color: #FF5370; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
                            <children>
-                              <Label layoutX="20.0" layoutY="15.0" text="Total Gasto" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="lblTotalDespesas" layoutX="20.0" layoutY="40.0" text="2.300,00 €" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="32.0" />
-                                 </font>
-                              </Label>
+                              <VBox spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label styleClass="titulo-cartao" text="Total Gasto" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="lblTotalDespesas" styleClass="valor-cartao" text="2.300,00 €" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="32.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                 </padding>
+                              </VBox>
                            </children>
                         </AnchorPane>
                      </children>

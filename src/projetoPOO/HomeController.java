@@ -2,6 +2,8 @@ package projetoPOO;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -10,6 +12,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -22,13 +27,14 @@ public class HomeController extends sceneController implements Initializable {
     @FXML private Label lblReceitas;
     @FXML private Label lblDespesas;
 
-    // MUDANÇA: Agora usamos Transacao (o pai de todos)
-    @FXML private TableView<Transacao> tabelaMovimentos;
+    // --- GRÁFICOS ---
+    @FXML private PieChart pieChartHome;
+    @FXML private BarChart<String, Number> barChartHome; // Agora é BarChart normal
 
+    // --- TABELA SIMPLIFICADA ---
+    @FXML private TableView<Transacao> tabelaMovimentos;
     @FXML private TableColumn<Transacao, LocalDate> colData;
     @FXML private TableColumn<Transacao, String> colDescricao;
-    @FXML private TableColumn<Transacao, String> colCategoria;
-    @FXML private TableColumn<Transacao, String> colPagamento;
     @FXML private TableColumn<Transacao, Double> colValor;
 
     @Override
@@ -38,63 +44,33 @@ public class HomeController extends sceneController implements Initializable {
         atualizarValoresFicticios(); 
 
         try {
-            // --- 1. DEFINIR O QUE APARECE ---
-            
-            // Data e Descrição são comuns a todos (Transacao)
+            // --- 1. DEFINIR COLUNAS DA TABELA ---
             colData.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getData()));
             colDescricao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescricao()));
             colValor.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getValor()));
 
-            // --- CATEGORIA (Só existe em Despesas) ---
-            colCategoria.setCellValueFactory(cellData -> {
-                Transacao t = cellData.getValue();
-                if (t instanceof DespesasPoo) {
-                    return new SimpleStringProperty(((DespesasPoo) t).getC().getNome());
-                } else if (t instanceof Receita) {
-                    return new SimpleStringProperty(((Receita) t).getTipo()); // Mostra o Tipo se for Receita
-                }
-                return new SimpleStringProperty("-");
-            });
-
-            // --- PAGAMENTO (Só existe em Despesas) ---
-            colPagamento.setCellValueFactory(cellData -> {
-                Transacao t = cellData.getValue();
-                if (t instanceof DespesasPoo) {
-                    return new SimpleStringProperty(((DespesasPoo) t).getF().getFormaPagamento());
-                }
-                return new SimpleStringProperty(""); // Receitas não têm pagamento, fica vazio
-            });
-
-
-            // --- 2. DEFINIR A COR E FORMATO ---
+            // Formatação de Cores da Tabela
             colValor.setCellFactory(column -> new TableCell<Transacao, Double>() {
                 @Override
                 protected void updateItem(Double item, boolean empty) {
                     super.updateItem(item, empty);
-
                     if (empty || item == null) {
                         setText(null);
                         setStyle(""); 
                     } else {
                         setText(String.format("%.2f €", item));
-
-                        Transacao movimentoAtual = getTableRow().getItem();
-
-                        if (movimentoAtual != null) {
-                            if (movimentoAtual instanceof Receita) {
-                                // VERDE
-                                setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold; -fx-alignment: CENTER-RIGHT;");
-                            } else if (movimentoAtual instanceof DespesasPoo) {
-                                // VERMELHO
-                                setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-alignment: CENTER-RIGHT;");
-                            }
+                        Transacao t = getTableRow().getItem();
+                        if (t != null) {
+                            if (t instanceof Receita) setStyle("-fx-text-fill: #2ecc71; -fx-font-weight: bold; -fx-alignment: CENTER-RIGHT;");
+                            else if (t instanceof DespesasPoo) setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-alignment: CENTER-RIGHT;");
                         }
                     }
                 }
             });
 
-            // Carregar os dados
+            // Carregar dados
             carregarDashboard();
+            carregarGraficos(); 
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,48 +78,91 @@ public class HomeController extends sceneController implements Initializable {
     }
     
     private void carregarDashboard() {
-        // 1. Segurança: Se não houver carteira, sai
-    	if (financas == null) {
-            System.out.println("Erro: Não há finanças ligadas à tabela.");
-            return;
-        }
-
-        // 2. Limpa a tabela para não duplicar dados
+        if (financas == null) return;
         tabelaMovimentos.getItems().clear();
-
         ObservableList<Transacao> listaVisual = FXCollections.observableArrayList(financas.transacoes);
-        
-        // 4. Mete na tabela
         tabelaMovimentos.setItems(listaVisual);
     }
 
+    // --- POPULAR GRÁFICOS ---
+    private void carregarGraficos() {
+        if (financas == null) return;
+
+        LocalDate hoje = LocalDate.now();
+        int mesAtual = hoje.getMonthValue();
+        int anoAtual = hoje.getYear();
+
+        // 1. PIE CHART
+        Map<String, Double> gastosCategoria = new HashMap<>();
+        for (DespesasPoo d : financas.despesas) {
+            if (d.getData().getMonthValue() == mesAtual && d.getData().getYear() == anoAtual) {
+                String cat = d.getC().getNome();
+                gastosCategoria.put(cat, gastosCategoria.getOrDefault(cat, 0.0) + d.getValor());
+            }
+        }
+        pieChartHome.getData().clear();
+        for (Map.Entry<String, Double> entry : gastosCategoria.entrySet()) {
+            pieChartHome.getData().add(new PieChart.Data(entry.getKey(), entry.getValue()));
+        }
+
+        // 2. BAR CHART (Lado a Lado)
+        double totalReceitaMes = 0;
+        double totalDespesaMes = 0;
+
+        for (Transacao t : financas.transacoes) {
+            if (t.getData().getMonthValue() == mesAtual && t.getData().getYear() == anoAtual) {
+                if (t instanceof Receita) totalReceitaMes += t.getValor();
+                else if (t instanceof DespesasPoo) totalDespesaMes += t.getValor();
+            }
+        }
+
+        barChartHome.getData().clear();
+        
+        // SÉRIE 1: RECEITAS (Verde)
+        XYChart.Series<String, Number> seriesR = new XYChart.Series<>();
+        seriesR.setName("Receitas");
+        // Usamos string vazia ou espaço para agrupar
+        seriesR.getData().add(new XYChart.Data<>("", totalReceitaMes));
+
+        // SÉRIE 2: DESPESAS (Vermelho)
+        XYChart.Series<String, Number> seriesD = new XYChart.Series<>();
+        seriesD.setName("Despesas");
+        seriesD.getData().add(new XYChart.Data<>("", totalDespesaMes));
+        
+        barChartHome.getData().addAll(seriesR, seriesD);
+    }
+
     private void atualizarValoresFicticios() {
-    	
-    	double totalReceita = financas.getTotalReceitas();
-    	
-    	double totalDespesa = financas.getTotalDespesas();
-    	
-    	double saldo = financas.getSaldo();
-    	
+        if (financas == null) return;
+
+        double totalReceita = financas.getTotalReceitas();
+        double totalDespesa = financas.getTotalDespesas();
+        double saldo = financas.getSaldo();
+        
         lblSaldo.setText(String.format("%.2f €", saldo));
         lblReceitas.setText(String.format("%.2f €", totalReceita));
         lblDespesas.setText(String.format("%.2f €", totalDespesa));
-        if (saldo >= 0) {
-            // Verde se positivo
-            lblSaldo.setStyle("-fx-text-fill: #2ecc71;"); 
-        } else {
-            // Vermelho se negativo
-            lblSaldo.setStyle("-fx-text-fill: #e74c3c;"); 
-        } 
+        
+        if (saldo >= 0) lblSaldo.setStyle("-fx-text-fill: #2ecc71;");
+        else lblSaldo.setStyle("-fx-text-fill: #ff5252;");
+        
+        lblReceitas.setStyle("-fx-text-fill: white;");
+        lblDespesas.setStyle("-fx-text-fill: white;");
     }
 
     @FXML
     void onNovaReceitaClick() {
         abrirFormulario("Receita");
+        carregarDashboard();
+        carregarGraficos();
+        atualizarValoresFicticios();
     }
 
     @FXML
     void onNovaDespesaClick() {
         abrirFormulario("Despesa");
+        carregarDashboard();
+        carregarGraficos();
+        atualizarValoresFicticios();
     }
 }

@@ -11,16 +11,14 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="700.0" prefWidth="1100.0" style="-fx-background-color: #F4F6F8;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projetoPOO.RelatoriosController">
@@ -68,49 +66,42 @@
                </padding>
             </Button>
          </children>
+         
          <effect>
-            <DropShadow>
-               <color>
-                  <Color opacity="0.30000001192092896" />
-               </color>
-            </DropShadow>
+            <DropShadow color="#0000004d" />
          </effect>
+         
       </VBox>
    </left>
    <center>
-      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxWidth="1.7976931348623157E308" prefHeight="0.0" style="-fx-alignment: Center; -fx-background-color: transparent; -fx-background: #F4F6F8;" stylesheets="@application.css" BorderPane.alignment="CENTER">
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-alignment: Center; -fx-background-color: transparent; -fx-background: #F4F6F8;" stylesheets="@application.css" BorderPane.alignment="CENTER">
          <content>
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="25.0">
+            <VBox alignment="TOP_CENTER" spacing="30.0">
                <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
-                     <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                     </padding>
+                  
+                  <HBox alignment="CENTER_LEFT" spacing="15.0">
                      <children>
-                        <Label minWidth="-Infinity" text="Relatórios Financeiros">
+                        <Label minWidth="-Infinity" styleClass="label-titulo" text="Relatórios Financeiros">
                            <font>
                               <Font name="System Bold" size="24.0" />
                            </font>
                         </Label>
-                        <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Pane HBox.hgrow="ALWAYS" />
                         <Label minWidth="-Infinity" text="De:" />
-                        <DatePicker fx:id="dpInicio" minWidth="-Infinity" prefWidth="150.0" />
+                        <DatePicker fx:id="dpInicio" minWidth="-Infinity" prefWidth="130.0" />
                         <Label minWidth="-Infinity" text="Até:" />
-                        <DatePicker fx:id="dpFim" minWidth="-Infinity" prefWidth="150.0" />
-                        <Button fx:id="btnGerarPDF" minWidth="-Infinity" mnemonicParsing="false" onAction="#onGerarPDF" style="-fx-background-color: #2D3447; -fx-text-fill: white;" text="Gerar PDF" />
-                     </children>
+                        <DatePicker fx:id="dpFim" minWidth="-Infinity" prefWidth="130.0" />
+                        </children>
                   </HBox>
-                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="25.0">
-                     <padding>
-                        <Insets bottom="20.0" top="20.0" />
-                     </padding>
+
+                  <HBox spacing="25.0">
                      <children>
-                        <AnchorPane prefHeight="120.0" prefWidth="220.0" style="-fx-background-color: linear-gradient(to right, #8E54E9, #4776E6); -fx-background-radius: 10;">
+                        <AnchorPane prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: linear-gradient(to right, #8E54E9, #4776E6); -fx-background-radius: 10;">
                            <children>
-                              <VBox spacing="10.0">
+                              <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <Label text="Média de Receitas" textFill="WHITE" />
-                                    <Label fx:id="lblTaxaPoupanca" text="1 000 000 €" textFill="WHITE">
+                                    <Label styleClass="titulo-cartao" text="Média de Receitas (Dia)" textFill="WHITE" />
+                                    <Label fx:id="lblTaxaPoupanca" styleClass="valor-cartao" text="0,00 €" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="30.0" />
                                        </font>
@@ -121,16 +112,13 @@
                                  </padding>
                               </VBox>
                            </children>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
                         </AnchorPane>
-                        <AnchorPane prefHeight="120.0" prefWidth="220.0" style="-fx-background-color: linear-gradient(to right, #FFB75E, #ED8F03); -fx-background-radius: 10;">
+                        <AnchorPane prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: linear-gradient(to right, #FFB75E, #ED8F03); -fx-background-radius: 10;">
                            <children>
-                              <VBox spacing="10.0">
+                              <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <Label text="Média de Gastos por Dia ao Mês" textFill="WHITE" />
-                                    <Label fx:id="lblMediaGastos" text="45,00 €" textFill="WHITE">
+                                    <Label styleClass="titulo-cartao" text="Média de Gastos (Dia)" textFill="WHITE" />
+                                    <Label fx:id="lblMediaGastos" styleClass="valor-cartao" text="0,00 €" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="30.0" />
                                        </font>
@@ -141,26 +129,13 @@
                                  </padding>
                               </VBox>
                            </children>
-                           <HBox.margin>
-                              <Insets left="20.0" />
-                           </HBox.margin>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
                         </AnchorPane>
                      </children>
                   </HBox>
-                  <GridPane hgap="30.0" prefHeight="600.0" vgap="30.0" VBox.vgrow="ALWAYS">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+
+                  <HBox minHeight="350.0" prefHeight="350.0" spacing="20.0">
                      <children>
-                        <LineChart fx:id="lineChartSaldo" createSymbols="false" title="Evolução do Saldo">
+                        <LineChart fx:id="lineChartSaldo" createSymbols="false" title="Evolução do Saldo" HBox.hgrow="ALWAYS">
                           <xAxis>
                             <CategoryAxis side="BOTTOM" />
                           </xAxis>
@@ -168,20 +143,44 @@
                             <NumberAxis side="LEFT" />
                           </yAxis>
                         </LineChart>
-                        <PieChart fx:id="pieChartDespesas" title="Despesas por Categoria" GridPane.columnIndex="1" />
-                        <StackedBarChart fx:id="barChartReceitasDespesas" title="Receitas vs Despesas (Ano Atual)" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
-                        </StackedBarChart>
+                        <PieChart fx:id="pieChartDespesas" title="Despesas por Categoria" HBox.hgrow="ALWAYS" />
                      </children>
-                  </GridPane>
+                  </HBox>
+
+                  <StackedBarChart fx:id="barChartReceitasDespesas" categoryGap="200.0" minHeight="350.0" prefHeight="350.0" title="Receitas vs Despesas">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </StackedBarChart>
+                  
+                  <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label text="Detalhes do Período">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <TableView fx:id="tabelaMovimentos" minHeight="300.0" styleClass="tabela-financas">
+                          <columns>
+                            <TableColumn fx:id="colData" prefWidth="100.0" text="Data" />
+                            <TableColumn fx:id="colDescricao" prefWidth="250.0" text="Descrição" />
+                              <TableColumn fx:id="colCategoria" prefWidth="120.0" text="Categoria" />
+                              <TableColumn fx:id="colPagamento" prefWidth="150.0" text="Pagamento" />
+                              <TableColumn fx:id="colValor" prefWidth="100.0" text="Valor" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </VBox>
+
                </children>
                <padding>
-                  <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                  <Insets bottom="40.0" left="30.0" right="30.0" top="30.0" />
                </padding>
             </VBox>
          </content>

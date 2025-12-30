@@ -28,10 +28,12 @@ public class FinancasPoo implements Serializable{
 	//Remover uma receita
 	public void eliminarReceita(Receita r) {
 		receitas.remove(r);
+		transacoes.remove(r);
 	}
 	//Remover uma despesa
 	public void eliminarDespesa(DespesasPoo d) {
 		despesas.remove(d);
+		transacoes.remove(d);
 	}
 	
 	//Atualizar uma receita (mudar o que lá está)

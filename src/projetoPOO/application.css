@@ -1,58 +1,55 @@
 /* 1. Definições Globais (Aplica-se a tudo) */
 .root {
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif; /* Fonte mais moderna */
-    -fx-font-size: 14px;
-    -fx-background-color: #F4F6F8; /* Um cinzento muito suave para o fundo geral */
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 14.0px;
+    -fx-background-color: #F4F6F8;
 }
 
-/* 2. Títulos */
+/* 2. Títulos Gerais */
 .label-titulo {
-    -fx-font-size: 24px;
+    -fx-font-size: 24.0px;
     -fx-font-weight: bold;
     -fx-text-fill: #2D3447;
 }
 
-/* Estilo base para todos os botões do menu */
+/* --- MENU LATERAL --- */
 .button-menu {
     -fx-background-color: transparent;
     -fx-text-fill: white;
-    -fx-font-size: 14px;
+    -fx-font-size: 14.0px;
     -fx-alignment: BASELINE_LEFT;
-    -fx-cursor: hand; /* O rato vira uma "mãozinha" */
+    -fx-cursor: hand;
 }
 
-/* Quando o rato passa por cima */
 .button-menu:hover {
-    -fx-background-color: #3C4559; /* Um azul um pouco mais claro */
-    -fx-border-color: transparent transparent transparent #2ed8b6; /* Linha verde à esquerda */
-    -fx-border-width: 0 0 0 4; /* Espessura da linha verde */
+    -fx-background-color: #3C4559;
+    -fx-border-color: transparent transparent transparent #2ed8b6;
+    -fx-border-width: 0.0 0.0 0.0 4.0;
 }
 
-/* --- ESTADO ATIVO (Para o botão da página atual) --- */
 .button-menu-ativo {
-    -fx-background-color: #3C4559; /* A mesma cor do hover */
-    -fx-border-color: transparent transparent transparent #2ed8b6; /* A linha verde */
-    -fx-border-width: 0 0 0 4;
-    -fx-font-weight: bold; /* Deixa o texto a negrito para destacar mais */
+    -fx-background-color: #3C4559;
+    -fx-border-color: transparent transparent transparent #2ed8b6;
+    -fx-border-width: 0.0 0.0 0.0 4.0;
+    -fx-font-weight: bold;
 }
 
-/* Remove a borda da tabela e o fundo cinzento */
+/* --- TABELAS --- */
 .tabela-financas {
     -fx-background-color: transparent;
     -fx-base: transparent;
     -fx-control-inner-background: transparent;
-    -fx-padding: 5;
+    -fx-padding: 5.0;
 }
 
-/* Cabeçalho da Tabela (Header) */
 .tabela-financas .column-header-background {
     -fx-background-color: transparent;
 }
 
 .tabela-financas .column-header, .tabela-financas .filler {
     -fx-background-color: transparent;
-    -fx-border-color: transparent transparent #2D3447 transparent; /* Linha azul em baixo */
-    -fx-border-width: 0 0 2 0;
+    -fx-border-color: transparent transparent #2D3447 transparent;
+    -fx-border-width: 0.0 0.0 2.0 0.0;
 }
 
 .tabela-financas .column-header .label {
@@ -61,90 +58,103 @@
     -fx-alignment: CENTER_LEFT;
 }
 
-/* Linhas da Tabela */
 .tabela-financas .table-row-cell {
-    -fx-background-color: #ffffff; /* Fundo branco */
-    -fx-border-color: transparent transparent #E0E0E0 transparent; /* Linha cinza suave */
-    -fx-border-width: 0 0 1 0;
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #E0E0E0 transparent;
+    -fx-border-width: 0.0 0.0 1.0 0.0;
 }
 
 .tabela-financas .table-cell {
-    -fx-alignment: CENTER_LEFT; /* Alinha à esquerda */
-    -fx-padding: 0 0 0 10; /* Dá um espacinho da margem esquerda */
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0.0 0.0 0.0 10.0;
     -fx-text-fill: #555555;
 }
 
-/* Remove a cor de fundo das células vazias (quando a tabela tem poucas linhas) */
 .tabela-financas .table-row-cell:empty {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
 
-/* Quando passas o rato por cima da linha */
 .tabela-financas .table-row-cell:hover {
-    -fx-background-color: #F0F4FF; /* Azul muito clarinho */
+    -fx-background-color: #F0F4FF;
 }
 
-/* Estilo Base para Botões de Ação */
+/* --- BOTÕES DE AÇÃO --- */
 .button {
     -fx-font-weight: bold;
     -fx-cursor: hand;
-    -fx-background-radius: 5;
+    -fx-background-radius: 5.0;
     -fx-text-fill: white;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 1);
+    -fx-effect: dropshadow(three-pass-box, rgba(0.0,0.0,0.0,0.2), 3.0, 0.0, 0.0, 1.0);
 }
 
-/* Botão de Receita (Verde) */
-.btn-acao-receita {
-    -fx-background-color: #2ed8b6;
-}
-.btn-acao-receita:hover {
-    -fx-background-color: #24b094; /* Tom mais escuro ao passar o rato */
-}
+.btn-acao-receita { -fx-background-color: #2ed8b6; }
+.btn-acao-receita:hover { -fx-background-color: #24b094; }
 
-/* Botão de Despesa (Vermelho) */
-.btn-acao-despesa {
-    -fx-background-color: #FF5370;
-}
-.btn-acao-despesa:hover {
-    -fx-background-color: #D6455D; /* Tom mais escuro ao passar o rato */
-}
+.btn-acao-despesa { -fx-background-color: #FF5370; }
+.btn-acao-despesa:hover { -fx-background-color: #D6455D; }
 
-/* Estilo unificado para os cartões brancos (Home, Relatórios, Sobre) */
+/* --- CARTÕES PADRÃO (Brancos) --- */
 .card-padrao {
     -fx-background-color: white;
-    -fx-background-radius: 15;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+    -fx-background-radius: 15.0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0.0,0.0,0.0,0.1), 10.0, 0.0, 0.0, 5.0);
 }
 
-/* Personalizar a Barra de Rolagem (Scrollbar) */
-.scroll-bar:vertical, .scroll-bar:horizontal {
-    -fx-background-color: transparent;
-}
-
+/* --- SCROLLBAR --- */
+.scroll-bar:vertical, .scroll-bar:horizontal { -fx-background-color: transparent; }
 .scroll-bar:vertical .track, .scroll-bar:horizontal .track {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-background-radius: 0em;
+    -fx-background-radius: 0.0em;
 }
-
-/* O "polegar" (a parte que mexes) */
 .scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
-    -fx-background-color: #bfbfbf; /* Cinza suave */
-    -fx-background-radius: 5em;
+    -fx-background-color: #bfbfbf;
+    -fx-background-radius: 5.0em;
 }
-
 .scroll-bar:vertical .thumb:hover, .scroll-bar:horizontal .thumb:hover {
-    -fx-background-color: #7d7d7d; /* Mais escuro quando passas o rato */
+    -fx-background-color: #7d7d7d;
 }
 
-/* Aplica apenas ao gráfico com fx:id="barChartReceitasDespesas" */
-#barChartReceitasDespesas .default-color0.chart-bar {
+/* --- GRÁFICOS --- */
+#barChartReceitasDespesas .default-color0.chart-bar { -fx-bar-fill: #2ed8b6; }
+#barChartReceitasDespesas .default-color1.chart-bar { -fx-bar-fill: #FF5370; }
+
+
+/* ============================================================
+   CORREÇÃO DO TEXTO PRETO (MUITO IMPORTANTE)
+   ============================================================ */
+
+/* 1. Classe Genérica: Texto branco forçado (para títulos, etc.) */
+.texto-branco {
+    -fx-text-fill: white !important;
+}
+
+/* 2. Títulos dos Cartões (ex: "Total Recebido") */
+.titulo-cartao {
+    -fx-text-fill: white !important;
+    -fx-opacity: 0.9;
+    -fx-font-size: 14.0px; /* Tamanho fixo para garantir consistência */
+}
+
+/* 3. Valores dos Cartões (ex: "2.300 €") */
+.valor-cartao {
+    /* Define o tamanho grande que tu queres */
+    -fx-font-size: 32.0px; 
+    -fx-font-weight: bold;
+    
+    /* DEFINIÇÃO DE COR:
+       Removemos o "!important" aqui.
+       Assim, por defeito é branco, mas se o Java mandar ser vermelho, ele obedece. */
+    -fx-text-fill: white; 
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0.5, 0, 3);
+}
+
+/* --- Cores para o BarChart da Home --- */
+#barChartHome .default-color0.chart-bar {
     -fx-bar-fill: #2ed8b6; 
 }
 
-#barChartReceitasDespesas .default-color1.chart-bar {
+#barChartHome .default-color1.chart-bar {
     -fx-bar-fill: #FF5370; 
 }
-
-

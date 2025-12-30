@@ -124,10 +124,23 @@ public class FormularioController {
 	                mostrarAlerta("Erro: Finanças não ligadas.");
 	                return;
 	            }
+	            
+	           
 
 	            double valor = Double.parseDouble(txtValor.getText().replace(",", "."));
 	            LocalDate data = dpData.getValue();
 	            String descricao = txtDescricao.getText();
+	            
+	            if(valor < 0)
+	            {
+	            	throw new ValorNegativo("o valor introduzido nao pode ser negativo!");
+	            }
+	            
+	            LocalDate hoje = LocalDate.now();
+	            if(data.isAfter(hoje))
+	            {
+	            	throw new DataFutura("Não se pode registar transações futuras!");
+	            }
 	            
 	            // Remover antigo se estivermos a editar
 	            // Nota: Confirma se o teu método 'remover' aceita Transacao ou se tens de fazer Cast
@@ -176,7 +189,11 @@ public class FormularioController {
 	            
 	            fecharJanela();
 	            
-
+	         
+	        } catch(DataFutura e) {
+	        	mostrarAlerta("Erro de Data: " + e.getMessage());
+	        } catch(ValorNegativo e) {
+	        	mostrarAlerta("Erro de validação: " + e.getMessage());
 	        } catch (NumberFormatException e) {
 	            mostrarAlerta("Valor inválido.");
 	        } catch (Exception e) {

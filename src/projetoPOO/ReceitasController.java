@@ -3,10 +3,12 @@ package projetoPOO;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -16,17 +18,33 @@ public class ReceitasController extends sceneController implements Initializable
     @FXML private Label lblTotalReceitas; 
     @FXML private TableView<Receita> tabelaReceitas; 
 
+    // --- Colunas ---
     @FXML private TableColumn<Receita, LocalDate> colData;
     @FXML private TableColumn<Receita, String> colDescricao;
     @FXML private TableColumn<Receita, String> colTipoReceita;
     @FXML private TableColumn<Receita, Double> colValor;
 
+    // --- FILTROS ---
+    @FXML private DatePicker dpFiltroData;
+    @FXML private TextField txtFiltroPesquisa;
+    @FXML private ComboBox<String> cbFiltroTipo; 
+
+    private FilteredList<Receita> listaFiltrada;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 1. Configurar Colunas
+        configurarColunas();
+        configurarFiltros();
+        carregarDados();
+    }
+
+    private void configurarColunas() {
         colData.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getData()));
         colDescricao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescricao()));
-        colTipoReceita.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTipo()));
+        
+        // Converte o tipo para String para exibir na tabela
+        colTipoReceita.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTp().toString()));
+        
         colValor.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getValor()));
 
         // Formatação Verde
@@ -41,62 +59,92 @@ public class ReceitasController extends sceneController implements Initializable
                 }
             }
         });
-
-        // 2. CARREGAR DADOS INICIAIS
-        carregarDados();
     }
 
-    // --- NOVO MÉTODO: RECARREGA A TABELA ---
-    private void carregarDados() {
-    	tabelaReceitas.getItems().clear(); 
-        
-        if (financas == null) {
-            System.out.println("Erro: Não há finanças ligadas à tabela.");
-            return;
-        }
-
-        ObservableList<Receita> listaVisual = FXCollections.observableArrayList();
-        
-  
-        listaVisual.addAll(financas.receitas); 
-        
-        // 5. "Colar" a lista na tabela
-        tabelaReceitas.setItems(listaVisual);
-        
-        if (lblTotalReceitas != null) {
-            // Opção A: Se já criaste o método getTotalReceitas() no FinancasPoo (Recomendado)
-            double total = financas.getTotalReceitas();
-
-            /* // Opção B: Se ainda não tens o método lá, calculas aqui:
-            double total = 0;
-            for (Receita r : financas.receitas) {
-                total += r.getValor();
+    // --- CORREÇÃO AQUI ---
+    private void configurarFiltros() {
+        if(cbFiltroTipo != null) {
+            cbFiltroTipo.getItems().add("Todos");
+            
+            // Usa a lista estática 'tpReceita' da tua classe TipoReceita
+            // Em vez de .values()
+            try {
+                 cbFiltroTipo.getItems().addAll(TipoReceita.tpReceita);
+            } catch (Exception e) {
+                System.out.println("Aviso: Não foi possível carregar os tipos de receita (tpReceita).");
             }
-            */
-
-            // Atualiza o texto do Label
-            lblTotalReceitas.setText(String.format("%.2f €", total));
+            
+            cbFiltroTipo.getSelectionModel().selectFirst();
         }
+    }
+
+    public void carregarDados() {
+        if (financas == null) return;
+
+        ObservableList<Receita> listaBase = FXCollections.observableArrayList(financas.receitas);
+        listaFiltrada = new FilteredList<>(listaBase, p -> true);
+        tabelaReceitas.setItems(listaFiltrada);
+        
+        onFiltrar(); 
+        atualizarTotal();
+    }
+
+    @FXML
+    void onFiltrar() {
+        if (listaFiltrada == null) return;
+
+        listaFiltrada.setPredicate(receita -> {
+            // 1. Filtro de Data
+            if (dpFiltroData.getValue() != null) {
+                if (!receita.getData().equals(dpFiltroData.getValue())) return false;
+            }
+
+            // 2. Filtro de Texto
+            String texto = txtFiltroPesquisa.getText();
+            if (texto != null && !texto.isEmpty()) {
+                if (!receita.getDescricao().toLowerCase().contains(texto.toLowerCase())) return false;
+            }
+
+            // 3. Filtro de Tipo (Corrigido para comparar Strings)
+            if (cbFiltroTipo != null) {
+                String tipoSelecionado = cbFiltroTipo.getValue();
+                if (tipoSelecionado != null && !tipoSelecionado.equals("Todos")) {
+                    // Compara o toString() do tipo da receita com o selecionado na combo
+                    if (!receita.getTp().toString().equals(tipoSelecionado)) return false;
+                }
+            }
+            return true;
+        });
+        
+        atualizarTotal();
+    }
+
+    private void atualizarTotal() {
+        double total = 0;
+        for (Receita r : tabelaReceitas.getItems()) {
+            total += r.getValor();
+        }
+        lblTotalReceitas.setText(String.format("%.2f €", total));
     }
 
     @FXML
     void onNovaReceitaClick() {
         abrirFormulario("Receita");
-        // DEPOIS DE FECHAR A JANELA, ATUALIZA A TABELA:
         carregarDados();
     }
 
     @FXML
     void onEditarClick() {
         editarGenerico(tabelaReceitas, "Receita");
-        // O editarGenerico já faz refresh, mas se mudares valores que afetam filtros, é melhor:
         carregarDados();
     }
 
     @FXML
     void onEliminarClick() {
-        eliminarGenerico(tabelaReceitas);
-        // Garante que o total é recalculado
-        carregarDados();
+        // Usa o método genérico da mãe que já corrigimos
+        Receita selecionada = tabelaReceitas.getSelectionModel().getSelectedItem();
+        if (eliminarGenerico(selecionada)) {
+            carregarDados();
+        }
     }
 }
